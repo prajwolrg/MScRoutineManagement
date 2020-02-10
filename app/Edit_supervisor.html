@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Edit Supervisor</title>
+  <style>
+      .edit{
+          background-color: dodgerblue;
+          margin:5px;
+          padding:5px;
+      }
+      .delete{
+          background-color:#d50000;
+          margin:5px;
+          padding:5px;
+      }
+
+      .heads{
+          display:inline;
+          margin-right:125px;
+         
+      }
+      input{
+          margin-right:5px;
+          size:50;
+      }
+  </style>
+</head>
+<body onload= buttonFunction()>
+    <div>
+    <p class="heads">NAME</p>
+    <p class="heads">INITIALS</p>
+    <p class="heads">POSITION</p>
+    </div>
+    <form id = "form_element">
+    </form>
+    <button class="submitChanges" id="submitChanges">SUBMIT_CHANGES</button>
+
+
+    <script>
+        var  i = 0;
+        const electron = require('electron');
+        const {ipcRenderer} = electron;
+        let sqlite3 = require('sqlite3').verbose();
+        let db_name = "dummydata.sqlite3";
+        let db_Path = __dirname + "/"+ db_name;
+        let db = new sqlite3.Database(db_Path);
+
+        function buttonFunction(){
+
+            let sqlCommandSupervisor = "SELECT * FROM Supervisor";
+            let form_element = document.getElementById('form_element');
+            
+            db.serialize(function (){ 
+                db.all(sqlCommandSupervisor, [], (err, rows) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    rows.forEach((row) => {
+
+                        const div_element = document.createElement('div');
+
+                        let input1 = document.createElement("input");
+                        input1.type = "text";
+                        input1.className = "SupervisorName";
+                        input1.value = row.Name;
+                        div_element.appendChild(input1); 
+
+                        let input2 = document.createElement("input");
+                        input2.type = "text";
+                        input2.className = "InitialsName";
+                        input2.value = row.Initials;
+                        div_element.appendChild(input2); 
+
+                        let input3 = document.createElement("input");
+                        input3.type = "text";
+                        input3.className = "PositionName";
+                        input3.value = row.Position;
+                        div_element.appendChild(input3); 
+
+                        let delete_btn = document.createElement("button");
+                        delete_btn.className = "delete";
+                        delete_btn.id = "deleteButton" + String(i);
+
+                        let d = document.createTextNode("DELETE");
+                        delete_btn.appendChild(d);
+
+                        div_element.appendChild(delete_btn); 
+                        form_element.appendChild(div_element);
+
+                        i = i+1;
+                    });
+                    
+                    // console.log(i);
+
+                    second();
+                });
+            });
+        }
+
+        function second(){
+          
+            // console.log(buttonListArray);
+            
+            let buttons = document.getElementsByTagName("button");
+            let buttonsCount = buttons.length - 1 ; //for last button     
+          
+            // console.log(buttonsCount);
+            // console.log(this.id);
+           
+            for (let j = 0; j < buttonsCount; j += 1) (function(j){
+                
+                // console.log(j);
+                //handle the event and add changes in database ...
+
+                document.getElementById("deleteButton" + j).onclick= function(e) {
+
+                    // console.log(j);
+                    // console.log(document.getElementById("deleteButton" + j));
+
+                    let parentID = document.getElementById("deleteButton" + j).parentNode;
+                    
+                    // console.log(parentID);
+
+                    parentID.parentNode.removeChild(parentID);
+
+                    //handle this event and add changes in database
+                }
+            })(j);
+  
+        }       
+
+        document.getElementById("submitChanges").onclick = function(e){
+            let sqlCommandSupervisorDelete = "DROP TABLE Supervisor";
+            
+            db.serialize(function () {
+                db.run(sqlCommandSupervisorDelete);
+                db.run("CREATE TABLE Supervisor(`Id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`Name`	TEXT NOT NULL,`Initials`	TEXT NOT NULL UNIQUE,`Position`  TEXT NOT NULL )");
+                
+                let SupervisorList_final = document.getElementsByClassName("SupervisorName");
+                let SupervisorListArray_final = [].slice.call(SupervisorList_final);
+                let db_Supervisor = [];
+
+                // console.log(teacherListArray_final);
+
+                for (i = 0; i < SupervisorListArray_final.length; i++){
+                    console.log(SupervisorListArray_final[i].value);
+                    db_Supervisor.push(SupervisorListArray_final[i].value);
+                }
+
+                // console.log(db_teacher);
+
+                let InitialList_final = document.getElementsByClassName("InitialsName");
+                let InitialListArray_final = [].slice.call(InitialList_final);
+                let db_Initial = [];
+
+                for (i = 0; i < InitialListArray_final.length; i++){
+                    console.log(InitialListArray_final[i].value);
+                    db_Initial.push(InitialListArray_final[i].value);
+                }
+
+                let PositionList_final = document.getElementsByClassName("PositionName");
+                let PositionListArray_final = [].slice.call(PositionList_final);
+                let db_Position = [];
+
+                for (i = 0; i < PositionListArray_final.length; i++){
+                    console.log(PositionListArray_final[i].value);
+                    db_Position.push(PositionListArray_final[i].value);
+                }
+
+                // console.log(db_Initial);
+
+                for(let j=0; j< db_Supervisor.length; j++){
+                    db.run("INSERT INTO Supervisor(`Name`,`Initials`,`Position`) VALUES ( '"+db_Supervisor[j]+"','"+db_Initial[j]+"','"+db_Position[j]+"')"); 
+                }
+
+
+                
+
+
+            });
+
+            // setTimeout(function() {ipcRenderer.send('closeWindow');}, 1000);
+            ipcRenderer.send('hideWindow');
+
+
+
+            // console.log("finish");
+        }
+
+    </script>
+</body>
+</html>

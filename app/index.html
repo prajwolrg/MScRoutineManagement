@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+    <head>
+      <title id="title">MSC_Routine_Generator</title>
+      <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <div>
+            <div align="center">
+
+               TRIBHUVAN UNIVERSITY<br>INSTITUTE OF ENGINEERING , PULCHOWK CAMPUS<br>Department of Electronics and Computer Engineering  <br>
+               <b>M.sc. Program</b>
+
+            </div>
+            <!-- <div align="center" class="batch">Class Routine of
+                <select id="select_batch">
+                    <option>2075</option>
+                    <option>2074</option>
+                    <option>2073</option>
+                    <option>2072</option>
+                    <option>2071</option>
+                    <option>2070</option>
+                </select>
+                batch
+            </div> -->
+
+            <div class="mains">
+                <b>
+                <div class="level_masters" align="center">Level : Masters</div>
+
+                <!-- <form>
+                  Program : <input type="text" name="program_name"><br>
+                  Last name: <input type="text" name="lname"><br>
+                  <input type="submit" value="Submit">
+                </form>  -->
+
+                <!-- <div class="program">Program
+                    <select id="select_program">
+                        <option></option>
+                        <option>1</option>
+                        <option>2</option>
+                    </select>
+                </div> -->
+
+                <!-- <div class="year">Year
+                    <select id="select_year">
+                        <option></option>
+                        <option>1</option>
+                        <option>2</option>
+                    </select>
+                </div> -->
+
+                <!-- <div class="part">Part
+                    <select id="select_part">
+                        <option></option>
+                        <option>1</option>
+                        <option>2</option>
+
+                    </select>
+                </div> -->
+
+                <div class="effective_date">Effective from
+                    <input type="date" id="select_date">
+                </div>
+
+                </b>
+            </div>
+
+            <div class="second_info">
+                <b>
+                <div class="time">Time
+                    <input type="number" id="select_firsttime" min="1" max="12" value=00>
+                    :
+                    <input type="number" id="select_secondtime" min="0" max="59" value=0>
+                    <select id="select_timeperiod">
+                        <option>AM</option>
+                        <option>PM</option>
+                    </select> 
+                </div>
+          
+                <div class="_interval">Interval of each period
+                    <!-- <select id="select_interval" onchange="func1()">
+                        <option >30</option>
+                        <option >45</option>
+                        <option value=50>50</option>
+                    </select> -->
+                    <input type="number" id="select_interval" 
+                   min="10" max="60" value=45>
+                    mins
+                    <button class="btn_settime" onclick="myFunction_settime()">Set Time</button>
+                </div>
+
+                <div class="_periods">No.of periods
+                    <select id="select_periods">
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                    </select>
+                </div>
+
+                </b>
+            </div>
+
+        </div>
+
+        <ul></ul>
+
+        <ul id="database">
+        </ul>
+        <script>
+            const electron = require('electron');
+            const {ipcRenderer} = electron;
+            const { remote } = require('electron')
+            let sqlite3 = require('sqlite3').verbose();
+            let db_name = "dummydata.sqlite3";
+            let db_Path = __dirname + "/"+ db_name;
+            let db = new sqlite3.Database(db_Path);
+            // let batch = document.getElementById("select_batch").value;
+            // let program=document.getElementById("select_program").value;
+            // let year=document.getElementById("select_year").value;
+            // let part=document.getElementById("select_part").value;
+            let date=document.getElementById("select_date").value;
+            let isfirst=0;
+            let first=0;
+            let frst=0;
+            let storez;
+            let Routine_name = "";
+            let word_path = "";
+            let arr=["sub1","sub2","sub3","sub4","sub5","sub6"];
+            let days=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday"];
+            let demoo=["demo0","demo1","demo2","demo3","demo4"];
+
+            document.write('<table border=1 class="top_table">');
+          
+            document.write('<tr>');
+            for(let k=0;k<5;k++){
+
+                if (isfirst==0){
+                    document.write('<th> '+"Day/time"+'</th>');
+                    isfirst=1;  
+                }
+
+                else{
+                    document.write('<th width="25%">');    
+                    if(k==1){
+                        document.write('<p id="timeslot1"></p>');
+                    }
+                    else if(k==2){
+                        document.write('<p id="timeslot2"></p>');
+                    }
+                    else if(k==3){
+                        document.write('<p id="timeslot3"></p>');
+                    }
+                    else if(k==4){
+                        document.write('<p id="timeslot4"></p>');
+                    }
+                    document.write('</th>');
+                }            
+            }
+
+            document.write('</tr>');
+                   
+            for(let i=0;i<days.length;i++){
+                document.write('<tr>');
+                for(let j=0;j<3;j++){
+
+                    if(first==0){
+                        document.write('<td>'+days[i]+'</td>');
+                        first=1;
+                    }
+
+                    else{
+                        document.write('<td colspan=2 width="50%">');                        
+                        document.write('<table border=1 width="320" class="tabb">');
+                        for(let l=0;l<2;l++){
+                            if (frst==0){
+                                document.write('<tr>');
+                                document.write('<td  class="subject_value_option" id="subject_value_option">');
+                                document.write('<select style="width: 106%" class="select_subject"  id="select_subject">');
+                                document.write('<option></option>'); 
+                                
+                                document.write('</select>');
+                                document.write('</td>');
+                                document.write('</tr>');
+                                frst=1;
+                            }
+                            else{
+                                document.write('<tr>');
+                                document.write('<td width="50%" class="teacher_value_option" id="teacher_value_option">');
+                                document.write('<select style="width: 106%" class="select_teacher" id="select_teacher">');
+                                document.write('<option>'+""+'</option>');  
+                                
+
+                                document.write('</select>');
+                                document.write('</td>')
+                                document.write('</tr>');
+                                frst=0;
+                            }              
+                        }
+
+                        document.write('</table>');
+                        document.write('</td>');
+                    } 
+                }
+                first=0;
+                document.write('</tr>');
+            
+            }
+                
+            document.write('</table>');
+           
+            function myFunction_settime(){
+                let start_hour_time=document.getElementById("select_firsttime").value;
+                let start_minute_time=document.getElementById("select_secondtime").value;
+                let interval=document.getElementById("select_interval").value;
+                let time_period=document.getElementById("select_timeperiod").value;
+                
+                if(interval==NaN){
+                    interval=0;
+                }
+                //Make it in the format of :00 -- :09
+                if(start_minute_time<10){
+                    start_minute_time="0"+start_minute_time;
+                }
+
+                for(let i=1;i<=4;i++){
+                    let new_time=parseInt(start_minute_time)+parseInt(interval);
+
+                    if(new_time>59){
+                        let subb=new_time-60;
+                        if(start_hour_time<12){
+                            storez=start_hour_time;
+                            start_hour_time++;
+                        }
+
+                        else{
+                            storez=start_hour_time;
+                            start_hour_time=1;
+                        }
+
+                        if(subb<10 && subb>=0){
+                            subb="0"+subb;
+                        }
+
+                        document.getElementById("timeslot"+i).innerHTML = storez+":"+start_minute_time+"-"+start_hour_time+":"+subb+" "+time_period;
+                        start_minute_time=subb;
+                    }
+
+                    else{
+                        document.getElementById("timeslot"+i).innerHTML = start_hour_time+":"+start_minute_time+"-"+start_hour_time+":"+new_time+" "+time_period;
+                        start_minute_time=new_time;
+                    }
+                }
+            }
+
+
+
+            document.write('<button type="button" id="Add_Changes">SAVE</button>');
+            document.write('<label id="pdf-path"></label>');
+            document.write('<button type="button" id="print-pdf">EXPORT PDF</button>');
+            document.write('<label id="Word-path"></label>');
+            document.write('<button type="button" id="exportWord">EXPORT DOC</button>');
+            document.write('<button type="button" id="Back">Previous</button>');
+
+            //doesn't think this below code is required as it works from menu.html...but who cares..let it be
+        
+            ipcRenderer.on('Teacher:Store',(event,teacher_name,teacher_initials) => {
+                db.serialize(function () {
+                    db.run("INSERT INTO Teacher(`Name`,`Initials`) VALUES ( '"+teacher_name+"','"+teacher_initials+"')");
+                })
+            });
+
+            //now probably this also....
+
+            ipcRenderer.on('Supervisor:Store',(event,Supervisor_name,Supervisor_initials,Supervisor_position) => {
+                db.serialize(function () {
+                    console.log(Supervisor_name);
+                    console.log(Supervisor_initials);
+                    console.log(Supervisor_position);  
+                    db.run("INSERT INTO Supervisor(`Name`,`Initials`,`Position`) VALUES ( '"+Supervisor_name+"','"+Supervisor_initials+"','"+Supervisor_position+"')");
+                })
+            });
+
+            //this piece of shit also doesn't run ever
+
+            ipcRenderer.on('Subject:Store',(event,Subject_name) => {
+                db.serialize(function () {
+                    db.run("INSERT INTO Subject (`Name`) VALUES ( '"+Subject_name+"')");
+                })
+            });
+
+            function dropDown (){
+                let sqlCommandTeacher = `SELECT DISTINCT Name Name FROM Teacher`;
+                let teacherList = document.getElementsByClassName('select_teacher');
+                let teacherListArray = [].slice.call(teacherList);
+
+                // console.log('Teacher list arr: '+ teacherListArray);
+                // console.log('Teacher list: ' + teacherList);
+
+                for (i = 0; i < teacherListArray.length; i++){
+                    while (teacherListArray[i].childNodes.length > 1) {
+                        teacherListArray[i].removeChild(teacherListArray[i].lastChild);
+                    }
+                }
+                
+                db.serialize(function () {
+
+                    db.all(sqlCommandTeacher, [], (err, rows) => {
+                        if (err) {
+                            throw err;
+                        }
+
+                        for (i = 0; i < teacherListArray.length; i++){
+                            rows.forEach((row) => {
+                                const option = document.createElement('option');
+                                const optionText = document.createTextNode(row.Name);
+                                option.appendChild(optionText);
+                                teacherListArray[i].appendChild(option);
+                            });
+                        }
+
+                    });
+
+                    let sqlCommandSubject = `SELECT DISTINCT Name Name FROM Subject`;
+                    let subjectList = document.getElementsByClassName('select_subject');
+                    let subjectListArray = [].slice.call(subjectList);
+
+                    // console.log('Sub list : ' + subjectList);
+
+                    db.all(sqlCommandSubject, [], (err, rows) => {
+                        if (err) {
+                            throw err;
+                        }
+
+                        for (i = 0; i < subjectListArray.length; i++){
+                            while (subjectListArray[i].childNodes.length > 1) {
+                                subjectListArray[i].removeChild(subjectListArray[i].lastChild);
+                            }
+                        }
+                        
+                        for( i = 0; i <subjectListArray.length; i++){
+                            rows.forEach((row) => {
+                                const option = document.createElement('option');
+                                const optionText = document.createTextNode(row.Name);
+                                option.appendChild(optionText);
+                                subjectListArray[i].appendChild(option);
+                            });
+                        }
+                    });
+                });
+            }
+
+            function old_dropDown (table_name){
+                Routine_name = table_name;
+                let sqlCommandTeacher = `SELECT DISTINCT Name Name FROM Teacher`;
+                let teacherList = document.getElementsByClassName('select_teacher');
+                let teacherListArray = [].slice.call(teacherList);
+                
+                // console.log('Teacher list arr: '+ teacherListArray);
+                // console.log('Teacher list: ' + teacherList);
+
+                for (i = 0; i < teacherListArray.length; i++){
+                    while (teacherListArray[i].childNodes.length > 0) {
+                        teacherListArray[i].removeChild(teacherListArray[i].lastChild);
+                    }
+                }
+                
+                // console.log('Teacher list arr2: '+ teacherListArray);
+
+                let sqlCommandTeacher_routine = `SELECT Teacher Name FROM ` + table_name;
+
+                db.serialize(function () {
+
+                    db.all(sqlCommandTeacher_routine, [], (err, rows) => {
+                        if (err) {
+                            throw err;
+                        }
+
+                        let i=0;
+
+                        rows.forEach((row) => {
+                            const option = document.createElement('option');
+                            const optionText = document.createTextNode(row.Name);
+                            option.appendChild(optionText);
+                            teacherListArray[i].appendChild(option);
+                            i=i+1;
+                        });
+
+                    });
+
+                    // console.log('Teacher list arr3: '+ teacherListArray);
+
+                    db.all(sqlCommandTeacher, [], (err, rows) => {
+                        if (err) {
+                            throw err;
+                        }
+
+                        for (i = 0; i < teacherListArray.length; i++){
+                            rows.forEach((row) => {
+                                const option = document.createElement('option');
+                                const optionText = document.createTextNode(row.Name);
+                                option.appendChild(optionText);
+                                teacherListArray[i].appendChild(option);
+                            });
+                        }
+
+                    });
+
+                    let sqlCommandSubject = `SELECT DISTINCT Name Name FROM Subject`;
+                    let subjectList = document.getElementsByClassName('select_subject');
+                    let subjectListArray = [].slice.call(subjectList);
+
+                    // console.log('Sub list : ' + subjectList);
+
+                    for (i = 0; i < subjectListArray.length; i++){
+                        while (subjectListArray[i].childNodes.length > 0) {
+                            subjectListArray[i].removeChild(subjectListArray[i].lastChild);
+                        }
+                    }
+                    
+                    let sqlCommandSubject_routine = `SELECT Subject Name FROM ` + table_name;
+
+                    db.all(sqlCommandSubject_routine, [], (err, rows) => {
+                        if (err) {
+                            throw err;
+                        }
+
+                        let i=0;
+
+                        rows.forEach((row) => {
+                            const option = document.createElement('option');
+                            const optionText = document.createTextNode(row.Name);
+                            option.appendChild(optionText);
+                            subjectListArray[i].appendChild(option);
+                            i=i+1;
+                        });
+
+                    });
+
+                    db.all(sqlCommandSubject, [], (err, rows) => {
+                        if (err) {
+                            throw err;
+                        }
+
+                        for( i = 0; i <subjectListArray.length; i++){
+                            rows.forEach((row) => {
+                                const option = document.createElement('option');
+                                const optionText = document.createTextNode(row.Name);
+                                option.appendChild(optionText);
+                                subjectListArray[i].appendChild(option);
+                            });
+                        }
+
+                    });
+                });
+            }
+
+            ipcRenderer.on('Routine:Create', (event, routine_name, batch_yr, prog_full, prog_acr, year_rot, yr_part) => {
+                Routine_name = routine_name;
+                document.getElementById("title").innerHTML = Routine_name;
+
+                // console.log(Routine_name);
+
+                dropDown();
+
+                db.serialize(function () {
+                    db.run("CREATE TABLE " + Routine_name + "(`Table_id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE ,`Day`	TEXT,`Period`	INTEGER NOT NULL,`Teacher`	TEXT NOT NULL,`Subject`	TEXT NOT NULL,`Batch` INTEGER,`Program_full`  TEXT,`Program_acronym`   TEXT,`Year`  INTEGER,`Part`  INTEGER,`Effective_from` TEXT,`Time`  TEXT)");
+                });
+
+
+                document.getElementById('Add_Changes').onclick = function(e){
+
+                    db.serialize(function () {
+                        let sqlCommandTableDelete = "DROP TABLE " + Routine_name;
+                        db.run(sqlCommandTableDelete);
+                        // db.run("CREATE TABLE " + Routine_name + "(`Table_id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE ,`Day`    TEXT NOT NULL,`Period`  INTEGER NOT NULL,`Teacher`  TEXT NOT NULL,`Subject` TEXT NOT NULL,`Batch` INTEGER NOT NULL,`Program_full`  TEXT NOT NULL,`Program_acronym`   TEXT NOT NULL,`Year`  INTEGER NOT NULL,`Part`  INTEGER NOT NULL,`Effective_from` TEXT NOT NULL,`Time`  TEXT NOT NULL)");
+
+                        db.run("CREATE TABLE " + Routine_name + "(`Table_id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE ,`Day`    TEXT,`Period`  INTEGER NOT NULL,`Teacher`  TEXT NOT NULL,`Subject` TEXT NOT NULL,`Batch` INTEGER,`Program_full`  TEXT,`Program_acronym`   TEXT,`Year`  INTEGER,`Part`  INTEGER,`Effective_from` TEXT,`Time`  TEXT)");
+
+                        
+
+                        let teacherList_final = document.getElementsByClassName("select_teacher");
+                        let teacherListArray_final = [].slice.call(teacherList_final);
+                        let routine_db_teacher = [];
+
+                        // console.log(teacherListArray_final);
+
+                        for (i = 0; i < teacherListArray_final.length; i++){
+                            routine_db_teacher.push(teacherListArray_final[i].value);
+                        }
+
+                        let subjectList_final = document.getElementsByClassName("select_subject");
+                        let subjectListArray_final = [].slice.call(subjectList_final);
+                        let routine_db_subject = [];
+
+                        for (i = 0; i < subjectListArray_final.length; i++){
+                            routine_db_subject.push(subjectListArray_final[i].value);
+                        }
+
+                        // console.log(routine_db_teacher);
+
+                        date_val = document.getElementById("select_date").value;
+
+                        for(let i=1;i<=6;i++){ 
+                            for(let j=1; j<=2; j++){
+                                // db.run("INSERT INTO " + Routine_name + "(`Day`,`Period`,`Teacher`,`Subject`) VALUES ( '"+days[i-1]+"','"+ j.toString() + "','" + routine_db_teacher[(i-1)*2+j-1] + "','"+ routine_db_subject[(i-1)*2+j-1] +"')");   
+                                db.run("INSERT INTO " + Routine_name + "(`Batch`,`Program_full`,`Program_acronym`,`Year`,`Part`,`Day`,`Period`,`Teacher`,`Subject`,`Effective_from`) VALUES ( '"+ batch_yr+"','"+prog_full+"','"+prog_acr+"','"+year_rot+"','"+yr_part+"','"+days[i-1]+"','"+ j.toString() + "','" + routine_db_teacher[(i-1)*2+j-1] + "','"+ routine_db_subject[(i-1)*2+j-1] +"','" + date_val + "')"); 
+                            }
+                        }
+
+                        // db.run("INSERT INTO " + Routine_name + "(`Batch`,`Program_full`,`Program_acronym`,`Year`,`Part`) VALUES ( '"+ batch_yr+"','"+prog_full+"','"+prog_acr+"','"+year_rot+"','"+yr_part+"') ");
+
+                    });
+                }
+                    
+            });
+
+            //code for differnt gatabases if different departments or levels as bachelors and masters
+
+            // ipcRenderer.on('DataBase:Create', (event, db_name ,db_dir_prefix) => {
+            //     let file_full_path = db_dir_prefix+ '/databases/'+db_name + ".sqlite3";
+            //     console.log(file_full_path);
+            //     db= new sqlite3.Database(file_full_path);
+            //     dbInitialize(db_name);
+            //     db.serialize(function () {
+            //         db.run("CREATE TABLE Teacher(`Id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`Name`	TEXT NOT NULL,`Initials`	TEXT NOT NULL UNIQUE)");
+            //         db.run("CREATE TABLE Subject (`Id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`Name`	TEXT NOT NULL UNIQUE)");
+                
+            //     })
+            //     dropDown(db);
+            // });
+
+            // ipcRenderer.on('Teacher:Store',(event,teacher_name,teacher_initials) => {
+            //     db.serialize(function () {
+            //         db.run("INSERT INTO Teacher(`Name`,`Initials`) VALUES ( '"+teacher_name+"','"+teacher_initials+"')");
+            //         db.each("SELECT * FROM Teacher", function (err, row) {
+            //             console.log(row);
+            //         });
+            //     })
+            //     dropDown(db);
+            // });
+
+            // ipcRenderer.on('Subject:Store',(event,Subject_name) => {
+            //     db.serialize(function () {
+            //         db.run("INSERT INTO Subject (`Name`) VALUES ( '"+Subject_name+"')");
+            //     })
+            //     dropDown(db);
+            // });
+
+
+            ipcRenderer.on('Routine:append', (event, routine_name) => {
+                Routine_name = routine_name;
+                document.getElementById("title").innerHTML = Routine_name;
+
+
+                let batch_yr_val = 5;
+                let prog_full_val = "v";
+                let prog_acr_val = "r";
+                let year_rot_val = 6;
+                let yr_part_val = 3;
+                let date_val = "2"
+
+                db.serialize(function () {
+
+                    let initial_sql_command = `SELECT Batch Batch, Program_full Program_full, Program_acronym Program_acronym, Year Year, Part Part, Effective_from Effective_from from "${Routine_name}" WHERE Table_id = 1`;
+                    db.get(initial_sql_command,(err, row) => {
+                        if (err) {
+                            return console.error(err.message);
+                        }
+                        batch_yr_val = row.Batch;
+                        prog_full_val = row.Program_full;
+                        prog_acr_val = row.Program_acronym;
+                        year_rot_val = row.Year;
+                        yr_part_val = row.Part;
+                        date_val = row.Effective_from;
+                        document.getElementById("select_date").value = date_val;
+                        console.log(year_rot_val);
+                        console.log(yr_part_val);
+
+                    });
+                });
+
+                // console.log(Routine_name);
+                
+                old_dropDown(Routine_name);
+
+                document.getElementById('Add_Changes').onclick = function(e){
+
+                    db.serialize(function () {
+                        let sqlCommandTableDelete = "DROP TABLE " + Routine_name;
+                        db.run(sqlCommandTableDelete);
+                        // db.run("CREATE TABLE " + Routine_name + "(`Table_id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE ,`Day`    TEXT NOT NULL,`Period`  INTEGER NOT NULL,`Teacher`  TEXT NOT NULL,`Subject` TEXT NOT NULL,`Batch` INTEGER NOT NULL,`Program_full`  TEXT NOT NULL,`Program_acronym`   TEXT NOT NULL,`Year`  INTEGER NOT NULL,`Part`  INTEGER NOT NULL,`Effective_from` TEXT NOT NULL,`Time`  TEXT NOT NULL)");
+
+                        db.run("CREATE TABLE " + Routine_name + "(`Table_id`    INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE ,`Day`    TEXT,`Period`  INTEGER NOT NULL,`Teacher`  TEXT NOT NULL,`Subject` TEXT NOT NULL,`Batch` INTEGER,`Program_full`  TEXT,`Program_acronym`   TEXT,`Year`  INTEGER,`Part`  INTEGER,`Effective_from` TEXT,`Time`  TEXT)");
+                        
+                        let teacherList_final = document.getElementsByClassName("select_teacher");
+                        let teacherListArray_final = [].slice.call(teacherList_final);
+                        let routine_db_teacher = [];
+
+                        // console.log(teacherListArray_final);
+
+                        for (i = 0; i < teacherListArray_final.length; i++){
+                            routine_db_teacher.push(teacherListArray_final[i].value);
+                        }
+
+                        let subjectList_final = document.getElementsByClassName("select_subject");
+                        let subjectListArray_final = [].slice.call(subjectList_final);
+                        let routine_db_subject = [];
+                        for (i = 0; i < subjectListArray_final.length; i++){
+                            routine_db_subject.push(subjectListArray_final[i].value);
+                        }
+
+
+                        // console.log(routine_db_teacher);
+                        date_val = document.getElementById("select_date").value;
+
+                        for(let i=1;i<=6;i++){ 
+                            for(let j=1; j<=2; j++){
+                                // db.run("INSERT INTO " + Routine_name + "(`Day`,`Period`,`Teacher`,`Subject`) VALUES ( '"+days[i-1]+"','"+ j.toString() + "','" + routine_db_teacher[(i-1)*2+j-1] + "','"+ routine_db_subject[(i-1)*2+j-1] +"')"); 
+
+                                db.run("INSERT INTO " + Routine_name + "(`Batch`,`Program_full`,`Program_acronym`,`Year`,`Part`,`Day`,`Period`,`Teacher`,`Subject`,`Effective_from`) VALUES ( '"+ batch_yr_val+"','"+prog_full_val+"','"+prog_acr_val+"','"+year_rot_val+"','"+yr_part_val+"','"+days[i-1]+"','"+ j.toString() + "','" + routine_db_teacher[(i-1)*2+j-1] + "','"+ routine_db_subject[(i-1)*2+j-1] +"','" + date_val + "')"); 
+                            }
+                        }
+                                        
+                    });
+
+                }
+            });
+
+            const printPDFButton =document.getElementById('print-pdf');
+            const printWordButton =document.getElementById('exportWord');
+
+
+            printPDFButton.addEventListener('click',event => {
+                ipcRenderer.send('print-to-pdf',Routine_name);
+
+            });
+
+            printWordButton.addEventListener('click',event => {
+                ipcRenderer.send('print-to-Word', Routine_name);
+            });
+
+            ipcRenderer.on('wrote-pdf',(event,path) =>{
+                const message = `Wrote pdf to : ${path}`;
+                document.getElementById('pdf-path').innerHTML = message;
+            });
+
+            ipcRenderer.on('wrote-Word',(event,path) =>{
+                const message = `Wrote word to : ${path}`;
+                document.getElementById('Word-path').innerHTML = message;
+            });
+
+            document.getElementById('Back').onclick = function(e){
+                    remote.getCurrentWindow().loadURL('file://' + __dirname + '/menu.html');
+            }
+
+        </script>
+
+        <br/>
+    </body>
+</html>

@@ -1,0 +1,41 @@
+{
+  "name": "msc_routine_management_system",
+  "productName": "Routine_Management",
+  "description": "5th Sem Project",
+  "version": "1.0.0",
+  "author": "Ashish@CRLannister https://github.com/CRLannister",
+  "copyright": "© 2019 , ashish",
+  "homepage": "http://example.com",
+  "license": "MIT",
+  "main": "app/app.js",
+  "build": {
+    "appId": "com.example.msc_routine_management_system",
+    "files": [
+      "app/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ]
+  },
+  "scripts": {
+    "postinstall": "install-app-deps",
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "release": "build"
+  },
+  "dependencies": {
+    "sqlite": "^3.0.3",
+    "sqlite3": "^4.1.1"
+  },
+  "devDependencies": {
+    "electron": "^7.1.9",
+    "electron-builder": "^22.2.0",
+    "electron-packager": "^14.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CRLannister/MSC_Routine_Management_system.git"
+  },
+  "bugs": {
+    "url": "https://github.com/CRLannister/MSC_Routine_Management_system/issues"
+  }
+}
