@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'development';
 const { app, BrowserWindow, Menu, ipcMain } = electron;
 const fs = require('fs');
 const os = require('os');
-const { shell } = require('electron') // deconstructing assignment
+const { shell, dialog } = require('electron') // deconstructing assignment
 const dir_prefix_name = app.getAppPath();
 const pdf_path = dir_prefix_name + "/pdf_dir/";
 const word_path = dir_prefix_name + "/word_dir/";
@@ -229,14 +229,25 @@ ipcMain.on('print-to-Word2', function (e) {
 ipcMain.on('print-to-pdf-word', (event, arg) => {
   routine_name_ext = arg + '(doc).pdf'
   const pdfPath = path.join(pdf_path, routine_name_ext);
-  secondWindow.webContents.printToPDF({
-    pageSize: 'Letter'
-  }).then(data => {
-    fs.writeFileSync(pdfPath, data, (err) => {
-      if (err) throw err
-      console.log('PDF success!')
-    })
-  }
-  )
+
+  dialog.showSaveDialog({
+    title: 'Save As',
+    defaultPath: pdfPath,
+    filters: [
+    { name: 'Portable File Format', extensions: ['pdf'] },
+  ]
+  }).then(result => {
+    if (!result.canceled) {
+      secondWindow.webContents.printToPDF({
+        pageSize: 'Letter'
+      }).then(data => {
+        fs.writeFileSync(result.filePath, data, (err) => {
+          if (err) throw err
+        })
+      })
+    }
+  }).catch(e => { console.log(e) })
+
+
 });
 
