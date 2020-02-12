@@ -375,6 +375,9 @@
     // then,..let's see afterwards....
 
     function exportHTML(table_name){
+        console.log('Export to pdf clicked');
+
+
         let header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
             "xmlns:w='urn:schemas-microsoft-com:office:word' " +
             "xmlns='http://www.w3.org/TR/REC-html40'>" +
@@ -401,7 +404,7 @@
 
 
 
-<button id="btn-export" onclick="exportHTML(table_name);">Export to word doc</button>
+<button id="btn-export" onclick="exportHTML(table_name);">Export to word/pdf doc</button>
 
 <!-- <button class="waves-effect waves-light btn" type="reset" id="cancelButton">Cancel</button> -->
 
