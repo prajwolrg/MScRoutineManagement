@@ -224,3 +224,19 @@ ipcMain.on('print-to-Word2', function (e) {
   console.log(Table_name);
   secondWindow.webContents.send('doc_name', Table_name);
 });
+
+
+ipcMain.on('print-to-pdf-word', (event, arg) => {
+  routine_name_ext = arg + '(doc).pdf'
+  const pdfPath = path.join(pdf_path, routine_name_ext);
+  secondWindow.webContents.printToPDF({
+    pageSize: 'Letter'
+  }).then(data => {
+    fs.writeFileSync(pdfPath, data, (err) => {
+      if (err) throw err
+      console.log('PDF success!')
+    })
+  }
+  )
+});
+

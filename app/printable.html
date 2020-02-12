@@ -376,25 +376,7 @@
 
     function exportHTML(table_name){
         console.log('Export to pdf clicked');
-
-
-        let header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' " +
-            "xmlns:w='urn:schemas-microsoft-com:office:word' " +
-            "xmlns='http://www.w3.org/TR/REC-html40'>" +
-            "<head><meta charset='utf-8'><title>Export HTML to Word Document with JavaScript</title></head><body>";
-        let footer = "</body></html>";
-        let sourceHTML = header + document.getElementById("a").innerHTML + footer;
-        // document.body.style = "white-space: pre;"
-
-        let source = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(sourceHTML);
-        let fileDownload = document.createElement("a");
-        document.body.appendChild(fileDownload);
-        fileDownload.href = source;
-        doc_name = table_name + ".docx";
-        // doc_name = doc_full_path;
-        fileDownload.download = doc_name;
-        fileDownload.click();
-        document.body.removeChild(fileDownload);
+        ipcRenderer.send('print-to-pdf-word', table_name);
     }
 
     // document.getElementById("cancelButton").onclick = function(e){
