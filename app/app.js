@@ -130,6 +130,7 @@ ipcMain.on('buttonClicked', function (e, buttonId) {
 // Catch item:add
 ipcMain.on('Teacher:add', function (e, teacher_name, teacher_initials) {
   mainWindow.webContents.send('Teacher:Store', teacher_name, teacher_initials);
+  console.log(`Name: ${teacher_name}   Initials: ${teacher_initials}`);
   addWindow.close();
   // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
   //addWindow = null;

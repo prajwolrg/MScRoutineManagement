@@ -42,7 +42,7 @@
         const electron = require('electron');
         const {ipcRenderer} = electron;
         var sqlite3 = require('sqlite3').verbose();
-        var db_name = "dummydata.sqlite3";
+        var db_name = "newdb.sqlite3";
         var db_Path = __dirname + "/"+ db_name;
         var db = new sqlite3.Database(db_Path);
 

@@ -40,7 +40,7 @@
             const electron = require('electron');
             const {ipcRenderer} = electron;
             var sqlite3 = require('sqlite3').verbose();
-            var db_name = "dummydata.sqlite3";
+            var db_name = "newdb.db";
             var db_Path = __dirname + "/"+ db_name;
             var db = new sqlite3.Database(db_Path);
 
@@ -76,7 +76,7 @@
 
             ipcRenderer.on('Teacher:Store',(event,teacher_name,teacher_initials) => {
                 db.serialize(function () {
-                    db.run("INSERT INTO Teacher(`Name`,`Initials`) VALUES ( '"+teacher_name+"','"+teacher_initials+"')");
+                    db.run("INSERT INTO Teachers(`Name`,`Initials`) VALUES ( '"+teacher_name+"','"+teacher_initials+"')");
                     db.each("SELECT * FROM Teacher", function (err, row) {
                         console.log(row);
                     });
@@ -85,7 +85,7 @@
 
             ipcRenderer.on('Subject:Store',(event,Subject_name) => {
                 db.serialize(function () {
-                    db.run("INSERT INTO Subject (`Name`) VALUES ( '"+Subject_name+"')");
+                    db.run("INSERT INTO Subjects (`Name`) VALUES ( '"+Subject_name+"')");
                 })
             });
 
