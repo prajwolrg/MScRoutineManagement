@@ -1,25 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>New Routine</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
 </head>
+
 <body>
   <div class="container">
     <form>
       <div>
-        <label>Enter New Routine Name</label>
-        <input type="text" id="item" autofocus placeholder="BCT073_2_2 .. Note:  Start with a character">
+        <label>Select Program</label>
+        <table border=1 width="320" class="tabb">
+          <tr>
+            <td>
+              <select style="width: 106%" id="program_dropdown" , onchange="updateParameters()">
+                <option> </option>
+              </select>
+            </td>
+          </tr>
+        </table>
+
         <label>Enter Batch Year</label>
-        <input type="text" id="batch_yr" autofocus placeholder="2073">
-        <label>Enter Program</label>
-        <input type="text" id="prog_full" autofocus placeholder="M.Sc. Computer Systems and Knowledge Engineering Program">
-        <label>Enter Program Acronym</label>
+        <table border=1 width="320" class="tabb">
+          <tr>
+            <td>
+              <select style="width: 106%" id="batch_yr">
+                <option> </option>
+              </select>
+            </td>
+          </tr>
+        </table>
+
+
+        <!-- <label>Year</label>
+        <input type="text" id="year_rot" autofocus placeholder="2"> -->
+
+        <label>Select Year</label>
+        <table border=1 width="320" class="tabb">
+          <tr>
+            <td>
+              <select style="width: 106%" id="year_dropdown">
+                <option> </option>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+        <!-- <input type="text" id="yr_part" autofocus placeholder="2"> -->
+
+        <label>Select Part</label>
+        <table border=1 width="320" class="tabb">
+          <tr>
+            <td>
+              <select style="width: 106%" id="part_dropdown">
+                <option> </option>
+                <option>1</option>
+                <option>2</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+        <!-- <input type="text" id="yr_part" autofocus placeholder="2"> -->
+
+        <label> Program Acronym</label>
         <input type="text" id="prog_acr" autofocus placeholder="MSCKSE">
-        <label>Year</label>
-        <input type="text" id="year_rot" autofocus placeholder="2">
-        <label>Part</label>
-        <input type="text" id="yr_part" autofocus placeholder="2">
+
       </div>
       <button class="waves-effect waves-light btn" type="reset" id="cancelButton">Cancel</button>
       <button class="waves-effect waves-light btn" type="submit">Add Routine Table</button>
@@ -28,28 +77,115 @@
 
   <script>
     const electron = require('electron');
-    const {ipcRenderer} = electron;
+    const { ipcRenderer } = electron;
+
+    var sqlite3 = require('sqlite3').verbose();
+    var db_name = "newdb.db";
+    var db_Path = __dirname + "/" + db_name;
+    var db = new sqlite3.Database(db_Path);
 
     document.querySelector('form').addEventListener('submit', submitForm);
 
-    function submitForm(e){
-      e.preventDefault();
-      const item = document.querySelector('#item').value;
-      const batch_yr = document.querySelector('#batch_yr').value;
-      const prog_full = document.querySelector('#prog_full').value;
-      const prog_acr = document.querySelector('#prog_acr').value;
-      const year_rot = document.querySelector('#year_rot').value;
-      const yr_part = document.querySelector('#yr_part').value;
+    document.getElementById("program_dropdown").style.display = "inline";
+    document.getElementById("part_dropdown").style.display = "inline";
+    document.getElementById("year_dropdown").style.display = "inline";
+    document.getElementById("batch_yr").style.display = "inline";
 
-	    //console.log(item);
-      //console.log(ipcRenderer);
-      
-      ipcRenderer.send('Routine:add', item , batch_yr, prog_full, prog_acr, year_rot, yr_part);
-      
-    }
-    document.getElementById("cancelButton").onclick = function(e){
-        ipcRenderer.send('closeWindow');
+    function old_dropDown(db) {
+      var table_names_query = "SELECT * FROM Programs"
+
+      let programList = document.getElementById('program_dropdown');
+      let batchList = document.getElementById('batch_yr');
+      let tableList2 = document.getElementById('part_dropdown');
+
+      while (programList.childNodes.length > 1) {
+        programList.removeChild(programList.lastChild);
       }
+
+      db.all(table_names_query, [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+
+        var i = 0;
+
+        rows.forEach((row) => {
+          const option = document.createElement('option');
+          const optionText = document.createTextNode(row.Full_Name);
+          option.appendChild(optionText);
+          programList.appendChild(option);
+
+          i = i + 1;
+        });
+      });
+
+
+      while (tableList2.childNodes.length > 1) {
+        tableList2.removeChild(tableList2.lastChild);
+      }
+
+      for (var j = 1; j < 9; j++) {
+        const option = document.createElement('option');
+        const optionText = document.createTextNode(j);
+        option.appendChild(optionText);
+        tableList2.appendChild(option);
+      }
+
+      while (batchList.childNodes.length > 1) {
+        batchList.removeChild(batchList.lastChild);
+      }
+
+      var d = new Date();
+      for (var j = d.getFullYear(); j >= 1990; j--) {
+        const option = document.createElement('option');
+        const optionText = document.createTextNode(j);
+        option.appendChild(optionText);
+        batchList.appendChild(option);
+      }
+
+    }
+    old_dropDown(db);
+
+    function updateParameters() {
+      var selectedItem = document.getElementById('program_dropdown').value;
+      var programAcronym;
+      var programTime;
+
+      var acronymQuery = `SELECT Acronym, Semesters From Programs WHERE Full_Name = "${selectedItem}"`;
+
+      db.all(acronymQuery, [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+
+        rows.forEach((row) => {
+          programAcronym = row.Acronym;
+          programTime = row.Semesters;
+
+          document.querySelector('#prog_acr').value = programAcronym;
+        });
+      });
+    }
+
+
+    function submitForm(e) {
+      e.preventDefault();
+      const prog_full = document.getElementById('program_dropdown').value;
+      const prog_acr = document.querySelector('#prog_acr').value;
+      const batch_yr= document.getElementById('batch_yr').value;
+      const year = document.getElementById('year_dropdown').value;
+      const part = document.getElementById('part_dropdown').value;
+
+      const routineName = `${prog_acr}_${batch_yr}_${semester}`;
+      console.log(routineName);
+
+      ipcRenderer.send('Routine:add', routineName, batch_yr, prog_full, prog_acr, year, part);
+
+    }
+    document.getElementById("cancelButton").onclick = function (e) {
+      ipcRenderer.send('closeWindow');
+    }
   </script>
 </body>
+
 </html>
