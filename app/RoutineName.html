@@ -176,7 +176,7 @@
       const year = document.getElementById('year_dropdown').value;
       const part = document.getElementById('part_dropdown').value;
 
-      const routineName = `${prog_acr}_${batch_yr}_${semester}`;
+      const routineName = `${prog_acr}_${batch_yr}_${year}_${part}`;
       console.log(routineName);
 
       ipcRenderer.send('Routine:add', routineName, batch_yr, prog_full, prog_acr, year, part);

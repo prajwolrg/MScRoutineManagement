@@ -179,9 +179,8 @@ ipcMain.on('Database:add', function (e, item) {
 });
 
 ipcMain.on('Routine:add', function (e, Routine_name, batch_yr, prog_full, prog_acr, year_rot, yr_part) {
-  Table_name = Routine_name;
-  console.log(Table_name);
-  mainWindow.webContents.send('Routine:Create', Table_name, batch_yr, prog_full, prog_acr, year_rot, yr_part);
+  console.log(Routine_name);
+  mainWindow.webContents.send('Routine:Create', Routine_name, batch_yr, prog_full, prog_acr, year_rot, yr_part);
   addWindow.close();
   // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
   //addWindow = null;

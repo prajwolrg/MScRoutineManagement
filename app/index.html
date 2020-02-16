@@ -476,6 +476,13 @@
 
         ipcRenderer.on('Routine:Create', (event, routine_name, batch_yr, prog_full, prog_acr, year_rot, yr_part) => {
             Routine_name = routine_name;
+            console.log(routine_name);
+            console.log(batch_yr);
+            console.log(prog_full);
+            console.log(prog_acr);
+            console.log(year_rot);
+            console.log(yr_part);
+
             document.getElementById("title").innerHTML = Routine_name;
 
             // console.log(Routine_name);
