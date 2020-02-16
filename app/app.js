@@ -121,6 +121,12 @@ ipcMain.on('buttonClicked', function (e, buttonId) {
   else if (buttonId == "editSupervisor") {
     createWindow("Edit Supervisor", "Edit_supervisor.html");
   }
+  else if (buttonId == "addProgram") {
+    createWindow("Add Program", "addProgram.html");
+  }
+  else if (buttonId == "editProgram") {
+    createWindow("Edit Program", "editProgram.html");
+  }
 
 
   // else if(buttonId=="saveRoutine"){
@@ -128,6 +134,14 @@ ipcMain.on('buttonClicked', function (e, buttonId) {
   // }
 });
 // Catch item:add
+ipcMain.on('Program:add', function (e, program_full_name, program_acronym) {
+  mainWindow.webContents.send('Program:Store', program_full_name, program_acronym);
+  console.log(`Name: ${program_full_name}   Initials: ${program_acronym}`);
+  addWindow.close();
+  // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
+  //addWindow = null;
+});
+
 ipcMain.on('Teacher:add', function (e, teacher_name, teacher_initials) {
   mainWindow.webContents.send('Teacher:Store', teacher_name, teacher_initials);
   console.log(`Name: ${teacher_name}   Initials: ${teacher_initials}`);

@@ -31,6 +31,8 @@
     <button type="button" id="addCourse">Add Course</button></br>
     <button type="button" id="addSupervisor">Add Supervisor</button></br>
     <button type="button" id="editSupervisor">Edit Supervisor</button></br>
+    <button type="button" id="addProgram">Add Program</button></br>
+    <button type="button" id="editProgram">Edit Program</button></br>
 
 
 
@@ -73,11 +75,26 @@
             document.getElementById('editSupervisor').onclick = function(e){
                 ipcRenderer.send('buttonClicked', 'editSupervisor');
             }
+            document.getElementById('addProgram').onclick = function(e){
+                ipcRenderer.send('buttonClicked', 'addProgram');
+            }
+            document.getElementById('editProgram').onclick = function(e){
+                ipcRenderer.send('buttonClicked', 'editProgram');
+            }
+
+            ipcRenderer.on('Program:Store',(event,program_full_name,program_acronym) => {
+                db.serialize(function () {
+                    db.run("INSERT INTO Programs(`Full_Name`,`Acronym`) VALUES ( '"+program_full_name+"','"+program_acronym+"')");
+                    db.each("SELECT * FROM Programs", function (err, row) {
+                        console.log(row);
+                    });
+                })
+            });
 
             ipcRenderer.on('Teacher:Store',(event,teacher_name,teacher_initials) => {
                 db.serialize(function () {
                     db.run("INSERT INTO Teachers(`Name`,`Initials`) VALUES ( '"+teacher_name+"','"+teacher_initials+"')");
-                    db.each("SELECT * FROM Teacher", function (err, row) {
+                    db.each("SELECT * FROM Teachers", function (err, row) {
                         console.log(row);
                     });
                 })

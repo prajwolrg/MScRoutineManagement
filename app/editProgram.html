@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Edit Teacher</title>
+  <title>Edit Program</title>
   <style>
       .edit{
           background-color: dodgerblue;
@@ -27,8 +27,7 @@
 </head>
 <body onload= buttonFunction()>
     <div>
-    <p class="heads">NAME</p>
-    <p class="heads">INITIALS</p>
+    <p class="heads">FULL NAME</p> <p class="heads">ACRONYM</p>
     </div>
     <form id = "form_element">
     </form>
@@ -48,11 +47,11 @@
 
         function buttonFunction(){
 
-            let sqlCommandTeacher = "SELECT * FROM Teachers";
+            let sqlCommandProgram = "SELECT * FROM Programs";
             let form_element = document.getElementById('form_element');
             
             db.serialize(function (){ 
-                db.all(sqlCommandTeacher, [], (err, rows) => {
+                db.all(sqlCommandProgram, [], (err, rows) => {
                     if (err) {
                         throw err;
                     }
@@ -63,14 +62,14 @@
 
                         var input1 = document.createElement("input");
                         input1.type = "text";
-                        input1.className = "TeacherName";
-                        input1.value = row.Name;
+                        input1.className = "ProgramFullName";
+                        input1.value = row.Full_Name;
                         div_element.appendChild(input1); 
 
                         var input2 = document.createElement("input");
                         input2.type = "text";
-                        input2.className = "InitialsName";
-                        input2.value = row.Initials;
+                        input2.className = "ProgramAcronym";
+                        input2.value = row.Acronym;
                         div_element.appendChild(input2); 
 
                         var delete_btn = document.createElement("button");
@@ -126,13 +125,13 @@
         }       
 
         document.getElementById("submitChanges").onclick = function(e){
-            let sqlCommandTeacherDelete = "DROP TABLE Teachers";
+            let sqlCommandProgramDelete = "DROP TABLE Programs";
             
             db.serialize(function () {
-                db.run(sqlCommandTeacherDelete);
-                db.run("CREATE TABLE Teachers(`Teacher_Id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`Name`	TEXT NOT NULL,`Initials`	TEXT NOT NULL UNIQUE)");
+                db.run(sqlCommandProgramDelete);
+                db.run("CREATE TABLE Programs(`Program_Id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,`Full_Name`	TEXT NOT NULL,`Acronym`	TEXT NOT NULL UNIQUE)");
                 
-                var teacherList_final = document.getElementsByClassName("TeacherName");
+                var teacherList_final = document.getElementsByClassName("ProgramFullName");
                 let teacherListArray_final = [].slice.call(teacherList_final);
                 var db_teacher = [];
 
@@ -144,7 +143,7 @@
 
                 // console.log(db_teacher);
 
-                var InitialList_final = document.getElementsByClassName("InitialsName");
+                var InitialList_final = document.getElementsByClassName("ProgramAcronym");
                 let InitialListArray_final = [].slice.call(InitialList_final);
                 var db_Initial = [];
 
@@ -155,7 +154,7 @@
                 // console.log(db_Initial);
 
                 for(var j=0; j< db_teacher.length; j++){
-                    db.run("INSERT INTO Teachers(`Name`,`Initials`) VALUES ( '"+db_teacher[j]+"','"+db_Initial[j]+"')"); 
+                    db.run("INSERT INTO Programs(`Full_Name`,`Acronym`) VALUES ( '"+db_teacher[j]+"','"+db_Initial[j]+"')"); 
                 }
 
             });
