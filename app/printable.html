@@ -196,7 +196,7 @@
 
     let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
     const sqlite3 = require('sqlite3').verbose();
-    let db_name = "dummydata.sqlite3";
+    let db_name = "newdb.db";
     let db_Path = __dirname + "/" + db_name;
     let db = new sqlite3.Database(db_Path);
     let Batch_yr = 0;
@@ -294,17 +294,17 @@
         // console.log(table_name);
         db.serialize(function () {
 
-            let initial_sql_command = `SELECT Batch Batch, Program_full Program_full, Program_acronym Program_acronym, Year Year, Part Part ,Effective_from Effective_from from "${table_name}" WHERE Table_id = 1`;
+            let initial_sql_command = `SELECT * FROM Routines WHERE Name = '${table_name}'`;
             db.get(initial_sql_command,(err, row) => {
                 if (err) {
                     return console.error(err.message);
                 }
                 Batch_yr = row.Batch;
-                Program_full_name = row.Program_full;
-                Program_acronym_name = row.Program_acronym;
+                Program_full_name = row.Program_Name;
+                Program_acronym_name = row.Program_Acronym;
                 Year_yr = row.Year;
                 Part_yr = row.Part;
-                effective_date = row.Effective_from;
+                // effective_date = row.Effective_from;
                 console.log(Year_yr);
                 console.log(Part_yr);
 
@@ -313,14 +313,14 @@
                 document.getElementById("Program_id").innerHTML += Program_acronym_name;
                 document.getElementById("year_id").innerHTML += Year_yr.toString() ;
                 document.getElementById("part_id").innerHTML += Part_yr.toString() ;
-                document.getElementById("effective_date_id").innerHTML += effective_date;
+                // document.getElementById("effective_date_id").innerHTML += effective_date;
                 document.getElementById("sup_course").innerHTML = Program_full_name;
 
             });
 
 
             for(let i = 0; i< days.length; i++){
-                let sqlCommand = `SELECT Teacher Teacher, Subject Subject from "${table_name}" WHERE Day = "${days[i]}"`;
+                let sqlCommand = `SELECT Teacher, Subject FROM Periods WHERE Routine_Name = '${table_name}' AND Day = ${i}+1`;
                 
                 // console.log(table_name);
 
