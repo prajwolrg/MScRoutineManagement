@@ -382,7 +382,7 @@
 
             // console.log('Teacher list arr2: '+ teacherListArray);
 
-            let sqlCommandTeacher_routine = `SELECT Teacher FROM Periods WHERE Routine_Name = '${routine_name}'`;
+            let sqlCommandTeacher_routine = `SELECT Teacher FROM Periods WHERE Routine_Name = '${routine_name}' ORDER BY Day`;
 
             db.serialize(function () {
 
@@ -398,8 +398,9 @@
                         const optionText = document.createTextNode(row.Teacher);
                         option.appendChild(optionText);
                         teacherListArray[i].appendChild(option);
-                        i = i + 1;
+                        i = i+1;
                     });
+                    console.log(rows);
 
                 });
 
@@ -432,7 +433,7 @@
                     }
                 }
 
-                let sqlCommandSubject_routine = `SELECT Subject FROM Periods WHERE Routine_Name = '${routine_name}'`;
+                let sqlCommandSubject_routine = `SELECT Subject FROM Periods WHERE Routine_Name = '${routine_name}' ORDER BY Day`;
 
                 db.all(sqlCommandSubject_routine, [], (err, rows) => {
                     if (err) {
@@ -448,7 +449,7 @@
                         subjectListArray[i].appendChild(option);
                         i = i + 1;
                     });
-
+                    console.log(rows);
                 });
 
                 db.all(sqlCommandSubject, [], (err, rows) => {
