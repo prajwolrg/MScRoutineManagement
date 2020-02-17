@@ -137,8 +137,6 @@
         let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
         let demoo = ["demo0", "demo1", "demo2", "demo3", "demo4"];
 
-        var Teachers = {};
-        var Subjects = {};
         let saveClickCount = 0;
 
         document.write('<table border=1 class="top_table">');
@@ -329,7 +327,6 @@
                             const optionText = document.createTextNode(row.Name);
                             option.appendChild(optionText);
                             teacherListArray[i].appendChild(option);
-                            Teachers[row.Name] = row.Teacher_Id;
                             // teacherIdArray[i] = row.Id;
                             // console.log(teacherIdArray[i] + '->' + teacherIdArray[i]);
                         });
@@ -361,7 +358,6 @@
                             const optionText = document.createTextNode(row.Name);
                             option.appendChild(optionText);
                             subjectListArray[i].appendChild(option);
-                            Subjects[row.Name] = row.Subject_Id;
                             // subjectIdArray[i] = row.Subject_Id;
                             // console.log(subjectIdArray[i] + '->' + subjectListArray[i]);
                         });
@@ -369,6 +365,109 @@
                 });
             });
         }
+
+        function old_drop(routine_name) {
+            let sqlCommandTeacher = `SELECT Name FROM Teachers`;
+            let teacherList = document.getElementsByClassName('select_teacher');
+            let teacherListArray = [].slice.call(teacherList);
+
+            // console.log('Teacher list arr: '+ teacherListArray);
+            // console.log('Teacher list: ' + teacherList);
+
+            for (i = 0; i < teacherListArray.length; i++) {
+                while (teacherListArray[i].childNodes.length > 0) {
+                    teacherListArray[i].removeChild(teacherListArray[i].lastChild);
+                }
+            }
+
+            // console.log('Teacher list arr2: '+ teacherListArray);
+
+            let sqlCommandTeacher_routine = `SELECT Teacher FROM Periods WHERE Routine_Name = '${routine_name}'`;
+
+            db.serialize(function () {
+
+                db.all(sqlCommandTeacher_routine, [], (err, rows) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    let i = 0;
+
+                    rows.forEach((row) => {
+                        const option = document.createElement('option');
+                        const optionText = document.createTextNode(row.Teacher);
+                        option.appendChild(optionText);
+                        teacherListArray[i].appendChild(option);
+                        i = i + 1;
+                    });
+
+                });
+
+
+                db.all(sqlCommandTeacher, [], (err, rows) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    for (i = 0; i < teacherListArray.length; i++) {
+                        rows.forEach((row) => {
+                            const option = document.createElement('option');
+                            const optionText = document.createTextNode(row.Name);
+                            option.appendChild(optionText);
+                            teacherListArray[i].appendChild(option);
+                        });
+                    }
+
+                });
+
+                let sqlCommandSubject = `SELECT Name FROM Subjects`;
+                let subjectList = document.getElementsByClassName('select_subject');
+                let subjectListArray = [].slice.call(subjectList);
+
+                // console.log('Sub list : ' + subjectList);
+
+                for (i = 0; i < subjectListArray.length; i++) {
+                    while (subjectListArray[i].childNodes.length > 0) {
+                        subjectListArray[i].removeChild(subjectListArray[i].lastChild);
+                    }
+                }
+
+                let sqlCommandSubject_routine = `SELECT Subject FROM Periods WHERE Routine_Name = '${routine_name}'`;
+
+                db.all(sqlCommandSubject_routine, [], (err, rows) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    let i = 0;
+
+                    rows.forEach((row) => {
+                        const option = document.createElement('option');
+                        const optionText = document.createTextNode(row.Subject);
+                        option.appendChild(optionText);
+                        subjectListArray[i].appendChild(option);
+                        i = i + 1;
+                    });
+
+                });
+
+                db.all(sqlCommandSubject, [], (err, rows) => {
+                    if (err) {
+                        throw err;
+                    }
+
+                    for (i = 0; i < subjectListArray.length; i++) {
+                        rows.forEach((row) => {
+                            const option = document.createElement('option');
+                            const optionText = document.createTextNode(row.Name);
+                            option.appendChild(optionText);
+                            subjectListArray[i].appendChild(option);
+                        });
+                    }
+                });
+            });
+        }
+
 
         function old_dropDown(table_name) {
             Routine_name = table_name;
@@ -474,6 +573,20 @@
             });
         }
 
+        function selectChanges(routineName) {
+            var teachers = [];
+            var subjects = [];
+            db.all(`SELECT Subject, Teacher FROM Periods WHERE Routine_Name = '${routineName}'`, [], (err, rows) => {
+                if (err) {
+                    console.log(err);
+                }
+                console.log(rows);
+                let teacherList = document.getElementsByClassName('select_teacher');
+                let teacherListArray = [].slice.call(teacherList);
+
+            })
+        }
+
         ipcRenderer.on('Routine:Create', (event, routine_name, batch_yr, prog_full, prog_acr, year_rot, yr_part) => {
             Routine_name = routine_name;
             console.log(routine_name);
@@ -490,15 +603,29 @@
             dropDown();
 
             db.serialize(function () {
-                db.run("INSERT INTO Routines (`Program_Name`, `Program_Acronym`, `Batch`, `Year`, `Part`) VALUES ( '" + prog_full + "' ,'" + prog_acr + "', '" + batch_yr + "',  '" + year_rot + "', '" + yr_part + "')", function (err) {
+                db.all(`SELECT * FROM Routines WHERE Name = '${routine_name}'`, [], (err, rows) => {
                     if (err) {
-                        return console.log(error);
+                        return console.log(err);
                     }
-                    console.log(`A row has been inserted into Routines with rowid ${this.lastID}`)
-                    routineId = this.lastID;
+                    if (rows.length > 0) {
+                        console.log('The routine already exists');
+                        console.log(routine_name);
+                        old_drop(routine_name);
+                    } else {
+                        console.log('It does not exist');
+                        db.serialize(function () {
+                            db.run("INSERT INTO Routines (`Name`, `Program_Name`, `Program_Acronym`, `Batch`, `Year`, `Part`) VALUES ('" + routine_name + "', '" + prog_full + "' ,'" + prog_acr + "', '" + batch_yr + "',  '" + year_rot + "', '" + yr_part + "')", function (err) {
+                                if (err) {
+                                    return console.log(error);
+                                }
+                                console.log(`A row has been inserted into Routines with rowid ${this.lastID}`)
+                                routineId = this.lastID;
+                            });
+                        });
+                    }
                 });
-
             });
+
 
 
             document.getElementById('Add_Changes').onclick = function (e) {
@@ -507,23 +634,19 @@
                     let teacherList_final = document.getElementsByClassName("select_teacher");
                     let teacherListArray_final = [].slice.call(teacherList_final);
                     let routine_db_teacher = [];
-                    let routine_db_teacher_index = [];
 
                     // console.log(teacherListArray_final);
 
                     for (i = 0; i < teacherListArray_final.length; i++) {
                         routine_db_teacher.push(teacherListArray_final[i].value);
-                        routine_db_teacher_index.push(Teachers[teacherListArray_final[i].value]);
                     }
 
                     let subjectList_final = document.getElementsByClassName("select_subject");
                     let subjectListArray_final = [].slice.call(subjectList_final);
                     let routine_db_subject = [];
-                    let routine_db_subject_index = [];
 
                     for (i = 0; i < subjectListArray_final.length; i++) {
                         routine_db_subject.push(subjectListArray_final[i].value);
-                        routine_db_subject_index.push(Subjects[subjectListArray_final[i].value]);
                     }
 
                     // console.log(routine_db_teacher);
@@ -535,7 +658,7 @@
                         for (let i = 1; i <= 6; i++) {
                             for (let j = 1; j <= 2; j++) {
                                 // db.run("INSERT INTO " + Routine_name + "(`Day`,`Period`,`Teacher`,`Subject`) VALUES ( '"+days[i-1]+"','"+ j.toString() + "','" + routine_db_teacher[(i-1)*2+j-1] + "','"+ routine_db_subject[(i-1)*2+j-1] +"')");   
-                                db.run(`INSERT INTO Periods (Routine_Id, Day, Period_No, Subject_Id, Teacher_Id) VALUES ("${routineId}", "${i}", "${j}", "${Subjects[routine_db_subject[(i - 1) * 2 + j - 1]]}", "${Teachers[routine_db_teacher[(i - 1) * 2 + j - 1]]}")`, function (err) {
+                                db.run(`INSERT INTO Periods (Routine_Name, Day, Period_No, Subject, Teacher) VALUES ("${routine_name}", "${i}", "${j}", "${routine_db_subject[(i - 1) * 2 + j - 1]}", "${routine_db_teacher[(i - 1) * 2 + j - 1]}")`, function (err) {
                                     if (err) {
                                         console.log(err);
                                     }
@@ -548,8 +671,8 @@
                         for (let i = 1; i <= 6; i++) {
                             for (let j = 1; j <= 2; j++) {
                                 db.run(`UPDATE Periods 
-                                        SET Subject_Id = "${Subjects[routine_db_subject[(i - 1) * 2 + j - 1]]}",  Teacher_Id = "${Teachers[routine_db_teacher[(i - 1) * 2 + j - 1]]}"
-                                        WHERE Routine_Id = "${routineId}" AND Day = "${i}" AND Period_No = "${j}"`, (err) => {
+                                        SET Subject = "${routine_db_subject[(i - 1) * 2 + j - 1]}",  Teacher = "${routine_db_teacher[(i - 1) * 2 + j - 1]}"
+                                        WHERE Routine_Name = "${routine_name}" AND Day = "${i}" AND Period_No = "${j}"`, (err) => {
                                     if (err) {
                                         console.log(err);
                                     }
@@ -595,8 +718,6 @@
                     document.getElementById("select_date").value = date_val;
                 });
             });
-
-            // console.log(Routine_name);
 
             old_dropDown(Routine_name);
 
