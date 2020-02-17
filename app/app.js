@@ -96,6 +96,10 @@ ipcMain.on('buttonClicked', function (e, buttonId) {
     console.log("update old routine");
   }
 
+  else if (buttonId == "teacherRoutine") {
+    createWindow("Teacher Routine", "teacherRoutine.html");
+  }
+
   else if (buttonId == "editTeacher") {
     createWindow("Edit Teacher", "editTeacher.html");
     console.log('edit teacher');
@@ -191,6 +195,14 @@ ipcMain.on('Routine:old', function (e, Routine_name) {
   Table_name = Routine_name;
   console.log(Table_name);
   mainWindow.webContents.send('Routine:append', Table_name);
+  addWindow.close();
+  // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
+  //addWindow = null;
+});
+
+ipcMain.on('Routine:Teacher', function (e, teacher_name) {
+  console.log(teacher_name);
+  mainWindow.webContents.send('Routine:TeacherGen', teacher_name);
   addWindow.close();
   // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
   //addWindow = null;

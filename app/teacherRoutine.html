@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Teacher Routine</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+</head>
+
+<body>
+  <div class="container">
+    <form>
+      <div>
+        <label>Select Teacher</label>
+        <table border=1 width="320" class="tabb">
+          <tr>
+            <td>
+              <select style="width: 106%" id="teacher_dropdown">
+                <option> </option>
+              </select>
+            </td>
+          </tr>
+        </table>
+
+      </div>
+      <button class="waves-effect waves-light btn" type="reset" id="cancelButton">Cancel</button>
+      <button class="waves-effect waves-light btn" type="submit">Generate Teacher Routine</button>
+    </form>
+  </div>
+
+  <script>
+    const electron = require('electron');
+    const { ipcRenderer } = electron;
+
+    var sqlite3 = require('sqlite3').verbose();
+    var db_name = "newdb.db";
+    var db_Path = __dirname + "/" + db_name;
+    var db = new sqlite3.Database(db_Path);
+
+    document.querySelector('form').addEventListener('submit', submitForm);
+
+    document.getElementById("teacher_dropdown").style.display = "inline";
+
+    function old_dropDown(db) {
+      var table_names_query = "SELECT Name FROM Teachers"
+
+      let teacherList = document.getElementById('teacher_dropdown');
+
+      while (teacherList.childNodes.length > 1) {
+        teacherList.removeChild(teacherList.lastChild);
+      }
+
+      db.all(table_names_query, [], (err, rows) => {
+        if (err) {
+          throw err;
+        }
+
+        var i = 0;
+
+        rows.forEach((row) => {
+          const option = document.createElement('option');
+          const optionText = document.createTextNode(row.Name);
+          option.appendChild(optionText);
+          teacherList.appendChild(option);
+
+          i = i + 1;
+        });
+      });
+
+    }
+    old_dropDown(db);
+
+    function submitForm(e) {
+      e.preventDefault();
+      const teacher = document.getElementById('teacher_dropdown').value;
+
+      console.log(teacher);
+      ipcRenderer.send('Routine:Teacher', teacher);
+
+    }
+    document.getElementById("cancelButton").onclick = function (e) {
+      ipcRenderer.send('closeWindow');
+    }
+  </script>
+</body>
+
+</html>

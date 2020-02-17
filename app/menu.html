@@ -25,6 +25,7 @@
 <body>
     <button type="button" id="newRoutine">New Routine</button></br>
     <button type="button" id="oldRoutine">Old Routines</button></br>
+    <button type="button" id="teacherRoutine">Teacher Routine</button></br>
     <button type="button" id="editTeacher">Edit teacher</button></br>
     <button type="button" id="editCourse">Edit Course</button></br>
     <button type="button" id="addTeacher">Add teacher</button></br>
@@ -56,6 +57,11 @@
                 const { remote } = require('electron')
                 remote.getCurrentWindow().loadURL('file://' + __dirname + '/index.html');
                 ipcRenderer.send('buttonClicked', 'oldRoutine');
+            }
+            document.getElementById('teacherRoutine').onclick = function(e){
+                const { remote } = require('electron')
+                remote.getCurrentWindow().loadURL('file://' + __dirname + '/printableTeacher.html');
+                ipcRenderer.send('buttonClicked', 'teacherRoutine');
             }
             document.getElementById('editTeacher').onclick = function(e){
                 ipcRenderer.send('buttonClicked', 'editTeacher');
