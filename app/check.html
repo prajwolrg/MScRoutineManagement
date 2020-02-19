@@ -1,0 +1,171 @@
+<html>
+
+<head>
+	<title>
+		Printable Routine
+	</title>
+
+	<style>
+		h4,
+		h5 {
+			line-height: 0.6;
+		}
+	</style>
+</head>
+
+<body>
+
+
+	<div id="exportContent"
+		<div align="center" id="heading">
+			<h4>TRIBHUVAN UNIVERSITY </h4>
+			<h4>INSTITUTE OF ENGINEERING, PULCHOWK CAMPUS </h4>
+			<h4>Department of Electronics and Computer Engineering </h4>
+			<h4 id="course_div_id"><u id="course_full_name">M.Sc. in Information &amp; Computer Engineering</u></h4>
+			<div id="course_div">
+				<h5 id="course_type">Class Routine of Batch: <b id="batch_id">2020</b></h5>
+			</div>
+
+			<!-- <div id="level_bef_table" width="90%">
+				<span id="level_id" style="display: inline-block; width: 20%;">Level: Masters</span>
+				<span id="Program_id" style="display: inline-block; width: 20%;">Program: MScICE</span>
+				<span id="year_id" style="display: inline-block; width: 10%;">Year: 1</span>
+				<span id="part_id" style="display: inline-block; width: 10%;">Part: 1</span>
+				<span id="effective_date_id" style="display: inline-block; width: 40%;">Effective from:
+					2076-03-01</span>
+			</div> -->
+		</div>
+
+		<table border="0" id="info" width="90%" align="center" cellpadding="5" cellspacing="100"
+			style="border-collapse: collapse;">
+			<tr align="center">
+				<td>Level: Masters</td>
+				<td>Program: MScICE</td>
+				<td>Year: 1</td>
+				<td>Part: 1</td>
+				<td>Effective From: 2076-03-01</td>
+			</tr>
+		</table>
+
+		<br>
+		<table border="1" id="top_table" width="90%" align="center" cellpadding="5" cellspacing="100"
+			style="border-collapse: collapse;">
+			<tr id="top_row">
+				<th>Day/time</th>
+				<th>10:15-12:00</th>
+				<th>1:00-2:45</th>
+			</tr>
+			<tr>
+				<td align="center"><b>Sunday</b></td>
+				<td align="center" width="40%">
+					<p>Madhav Aryal <br>
+						Computer Organization &amp; Architecture</p>
+				</td>
+				<td align="center" width="40%">
+					<p>Madhav Aryal<br>
+						Probability and Statistics</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">Monday</td>
+				<td align="center">
+					<p>Kritan Banstola<br>
+						Instrumentation II</p>
+				</td>
+				<td align="center">
+					<p>Prajwol Gyawali<br>
+						Communication English</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">Tuesday</td>
+				<td align="center">
+					<p>Gaurav Pokharel<br>
+						Communication English</p>
+				</td>
+				<td align="center">
+					<p>motey motey<br>
+						Apple 101</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">Wednesday</td>
+				<td align="center">
+					<p>Kritan Banstola<br>
+						Data Communication</p>
+				</td>
+				<td align="center">
+					<p>Sudarshan Regmi<br>
+						Software Engineering</p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">Thursday<br>
+				<td align="center">
+					<p></p>
+					<p></p>
+				</td>
+				<td align="center">
+					<p><br><br></p>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">Friday</td>
+				<td align="center">
+					<p>Gaurav Pokharel<br>
+						Computer Graphics</p>
+				</td>
+				<td align="center">
+					<p></p>
+					<p></p>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+
+
+	<button id="btn-export" onclick="window.print();">Export to word/pdf doc</button>
+	<button onclick="Export2Doc('exportContent');">Export as .doc</button>
+
+	<script>
+		function Export2Doc(element, filename = '') {
+			var preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
+			var postHtml = "</body></html>";
+			var html = preHtml + document.getElementById(element).innerHTML + postHtml;
+
+			var blob = new Blob(['\ufeff', html], {
+				type: 'application/msword'
+			});
+
+			// Specify link url
+			var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+
+			// Specify file name
+			filename = filename ? filename + '.doc' : 'document.doc';
+
+			// Create download link element
+			var downloadLink = document.createElement("a");
+
+			document.body.appendChild(downloadLink);
+
+			if (navigator.msSaveOrOpenBlob) {
+				navigator.msSaveOrOpenBlob(blob, filename);
+			} else {
+				// Create a link to the file
+				downloadLink.href = url;
+
+				// Setting the file name
+				downloadLink.download = filename;
+
+				//triggering the function
+				downloadLink.click();
+			}
+
+			document.body.removeChild(downloadLink);
+		}
+	</script>
+
+</body>
+
+</html>

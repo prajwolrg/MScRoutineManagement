@@ -23,17 +23,15 @@
 </head>
 
 <body>
-    <button type="button" id="newRoutine">New Routine</button></br>
+    <button type="button" id="newRoutine">Check Routine</button></br>
     <button type="button" id="oldRoutine">Old Routines</button></br>
-    <button type="button" id="teacherRoutine">Teacher Routine</button></br>
-    <button type="button" id="editTeacher">Edit teacher</button></br>
-    <button type="button" id="editCourse">Edit Course</button></br>
-    <button type="button" id="addTeacher">Add teacher</button></br>
-    <button type="button" id="addCourse">Add Course</button></br>
-    <button type="button" id="addSupervisor">Add Supervisor</button></br>
-    <button type="button" id="editSupervisor">Edit Supervisor</button></br>
     <button type="button" id="addProgram">Add Program</button></br>
     <button type="button" id="editProgram">Edit Program</button></br>
+    <button type="button" id="addCourse">Add Course</button></br>
+    <button type="button" id="editCourse">Edit Course</button></br>
+    <button type="button" id="addTeacher">Add teacher</button></br>
+    <button type="button" id="editTeacher">Edit teacher</button></br>
+    <button type="button" id="teacherRoutine">Teacher Routine</button></br>
 
 
 
@@ -88,9 +86,9 @@
                 ipcRenderer.send('buttonClicked', 'editProgram');
             }
 
-            ipcRenderer.on('Program:Store',(event,program_full_name,program_acronym) => {
+            ipcRenderer.on('Program:Store',(event,program_full_name,program_acronym, program_coordinator) => {
                 db.serialize(function () {
-                    db.run("INSERT INTO Programs(`Full_Name`,`Acronym`) VALUES ( '"+program_full_name+"','"+program_acronym+"')");
+                    db.run("INSERT INTO Programs(`Full_Name`,`Acronym`,`Coordinator`) VALUES ( '"+program_full_name+"','"+program_acronym+"', '"+program_coordinator+"')");
                     db.each("SELECT * FROM Programs", function (err, row) {
                         console.log(row);
                     });

@@ -12,6 +12,8 @@
         <input type="text" id="item" autofocus>
 	      <label>Enter Program Acronym</label>
 	      <input type="text" id="programAcronym" autofocus>
+	      <label>Enter Program Coordinator</label>
+	      <input type="text" id="programCoordinator" autofocus>
 
       </div>
       <button class="waves-effect waves-light btn" type="reset" id="cancelButton">Cancel</button>
@@ -29,8 +31,9 @@
       e.preventDefault();
       const program_full_name = document.querySelector('#item').value;
       const program_acronym = document.querySelector('#programAcronym').value;
+      const program_coordinator = document.querySelector('#programCoordinator').value;
       console.log(ipcRenderer);
-      ipcRenderer.send('Program:add', program_full_name,program_acronym);
+      ipcRenderer.send('Program:add', program_full_name,program_acronym, program_coordinator);
     }
 
     //sending message to exit the window if cancel button is clicked.

@@ -138,9 +138,9 @@ ipcMain.on('buttonClicked', function (e, buttonId) {
   // }
 });
 // Catch item:add
-ipcMain.on('Program:add', function (e, program_full_name, program_acronym) {
-  mainWindow.webContents.send('Program:Store', program_full_name, program_acronym);
-  console.log(`Name: ${program_full_name}   Initials: ${program_acronym}`);
+ipcMain.on('Program:add', function (e, program_full_name, program_acronym, program_coordinator) {
+  mainWindow.webContents.send('Program:Store', program_full_name, program_acronym, program_coordinator);
+  console.log(`Name: ${program_full_name}   Initials: ${program_acronym}  Coordinator: ${program_coordinator}`);
   addWindow.close();
   // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
   //addWindow = null;
