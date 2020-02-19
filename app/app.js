@@ -119,12 +119,6 @@ ipcMain.on('buttonClicked', function (e, buttonId) {
     createWindow("Add Course", "addSubject.html");
     console.log('add course');
   }
-  else if (buttonId == "addSupervisor") {
-    createWindow("Add Supervisor", "addSupervisor.html");
-  }
-  else if (buttonId == "editSupervisor") {
-    createWindow("Edit Supervisor", "Edit_supervisor.html");
-  }
   else if (buttonId == "addProgram") {
     createWindow("Add Program", "addProgram.html");
   }
@@ -154,15 +148,6 @@ ipcMain.on('Teacher:add', function (e, teacher_name, teacher_initials) {
   //addWindow = null;
 });
 
-ipcMain.on('Supervisor:add', function (e, Supervisor_name, Supervisor_initials, Supervisor_position) {
-  // console.log(Supervisor_name);
-  // console.log(Supervisor_initials);
-  // console.log(Supervisor_position);
-  mainWindow.webContents.send('Supervisor:Store', Supervisor_name, Supervisor_initials, Supervisor_position);
-  addWindow.close();
-  // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
-  //addWindow = null;
-});
 
 
 ipcMain.on('Subject:add', function (e, Subject_name) {
@@ -207,9 +192,6 @@ ipcMain.on('Routine:Teacher', function (e, teacher_name) {
   // Still have a reference to addWindow in memory. Need to reclaim memory (Grabage collection)
   //addWindow = null;
 });
-
-
-
 
 // pdf print function
 //closing the window by "cancel" button.

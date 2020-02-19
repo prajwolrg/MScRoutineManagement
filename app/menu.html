@@ -24,7 +24,6 @@
 
 <body>
     <button type="button" id="newRoutine">Check Routine</button></br>
-    <button type="button" id="oldRoutine">Old Routines</button></br>
     <button type="button" id="addProgram">Add Program</button></br>
     <button type="button" id="editProgram">Edit Program</button></br>
     <button type="button" id="addCourse">Add Course</button></br>
@@ -51,11 +50,6 @@
                 remote.getCurrentWindow().loadURL('file://' + __dirname + '/index.html');
                 ipcRenderer.send('buttonClicked', 'newRoutine');
             }
-            document.getElementById('oldRoutine').onclick = function(e){
-                const { remote } = require('electron')
-                remote.getCurrentWindow().loadURL('file://' + __dirname + '/index.html');
-                ipcRenderer.send('buttonClicked', 'oldRoutine');
-            }
             document.getElementById('teacherRoutine').onclick = function(e){
                 const { remote } = require('electron')
                 remote.getCurrentWindow().loadURL('file://' + __dirname + '/printableTeacher.html');
@@ -72,12 +66,6 @@
             }
             document.getElementById('addCourse').onclick = function(e){
                 ipcRenderer.send('buttonClicked', 'addCourse');
-            }
-            document.getElementById('addSupervisor').onclick = function(e){
-                ipcRenderer.send('buttonClicked', 'addSupervisor');
-            }
-            document.getElementById('editSupervisor').onclick = function(e){
-                ipcRenderer.send('buttonClicked', 'editSupervisor');
             }
             document.getElementById('addProgram').onclick = function(e){
                 ipcRenderer.send('buttonClicked', 'addProgram');
@@ -110,15 +98,6 @@
                 })
             });
 
-            ipcRenderer.on('Supervisor:Store',(event,Supervisor_name,Supervisor_initials,Supervisor_position) => {
-                db.serialize(function () {
-                    console.log(Supervisor_name);
-                    console.log(Supervisor_initials);
-                    console.log(Supervisor_position);  
-                    db.run("INSERT INTO Supervisor(`Name`,`Initials`,`Position`) VALUES ( '"+Supervisor_name+"','"+Supervisor_initials+"','"+Supervisor_position+"')");
-                })
-            });
-            
         </script>
 
   
