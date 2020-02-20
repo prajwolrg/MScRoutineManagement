@@ -31,37 +31,6 @@
             <b>
                 <div class="level_masters" align="center">Level : Masters</div>
 
-                <!-- <form>
-                  Program : <input type="text" name="program_name"><br>
-                  Last name: <input type="text" name="lname"><br>
-                  <input type="submit" value="Submit">
-                </form>  -->
-
-                <!-- <div class="program">Program
-                    <select id="select_program">
-                        <option></option>
-                        <option>1</option>
-                        <option>2</option>
-                    </select>
-                </div> -->
-
-                <!-- <div class="year">Year
-                    <select id="select_year">
-                        <option></option>
-                        <option>1</option>
-                        <option>2</option>
-                    </select>
-                </div> -->
-
-                <!-- <div class="part">Part
-                    <select id="select_part">
-                        <option></option>
-                        <option>1</option>
-                        <option>2</option>
-
-                    </select>
-                </div> -->
-
                 <div class="effective_date">Effective from
                     <input type="date" id="select_date">
                 </div>
@@ -82,11 +51,6 @@
                 </div>
 
                 <div class="_interval">Interval of each period
-                    <!-- <select id="select_interval" onchange="func1()">
-                        <option >30</option>
-                        <option >45</option>
-                        <option value=50>50</option>
-                    </select> -->
                     <input type="number" id="select_interval" min="10" max="60" value=45>
                     mins
                     <button class="btn_settime" onclick="myFunction_settime()">Set Time</button>
@@ -95,12 +59,6 @@
                 <div class="_periods">No.of periods
                     <select id="select_periods">
                         <option>2</option>
-                        <option>3</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
                     </select>
                 </div>
 
@@ -111,8 +69,6 @@
 
     <ul></ul>
 
-    <ul id="database">
-    </ul>
     <script>
         const electron = require('electron');
         const { ipcRenderer } = electron;
@@ -133,9 +89,7 @@
         let Routine_name = "";
         let routineId = 0;
         let word_path = "";
-        let arr = ["sub1", "sub2", "sub3", "sub4", "sub5", "sub6"];
         let days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
-        let demoo = ["demo0", "demo1", "demo2", "demo3", "demo4"];
 
         let saveClickCount = 0;
 
@@ -263,7 +217,6 @@
         }
 
 
-
         document.write('<button type="button" id="Add_Changes">SAVE</button>');
         document.write('<label id="pdf-path"></label>');
         document.write('<button type="button" id="print-pdf">EXPORT PDF</button>');
@@ -271,42 +224,11 @@
         document.write('<button type="button" id="exportWord">EXPORT DOC</button>');
         document.write('<button type="button" id="Back">Previous</button>');
 
-        //doesn't think this below code is required as it works from menu.html...but who cares..let it be
-
-        ipcRenderer.on('Teacher:Store', (event, teacher_name, teacher_initials) => {
-            db.serialize(function () {
-                db.run("INSERT INTO Teacher(`Name`,`Initials`) VALUES ( '" + teacher_name + "','" + teacher_initials + "')");
-            })
-        });
-
-        //now probably this also....
-
-        ipcRenderer.on('Supervisor:Store', (event, Supervisor_name, Supervisor_initials, Supervisor_position) => {
-            db.serialize(function () {
-                console.log(Supervisor_name);
-                console.log(Supervisor_initials);
-                console.log(Supervisor_position);
-                db.run("INSERT INTO Supervisor(`Name`,`Initials`,`Position`) VALUES ( '" + Supervisor_name + "','" + Supervisor_initials + "','" + Supervisor_position + "')");
-            })
-        });
-
-        //this piece of shit also doesn't run ever
-
-        ipcRenderer.on('Subject:Store', (event, Subject_name) => {
-            db.serialize(function () {
-                db.run("INSERT INTO Subject (`Name`) VALUES ( '" + Subject_name + "')");
-            })
-        });
-
         function dropDown() {
 
             let sqlCommandTeacher = `SELECT Teacher_Id, Name FROM Teachers`;
             let teacherList = document.getElementsByClassName('select_teacher');
             let teacherListArray = [].slice.call(teacherList);
-            // let teacherIdArray = [];
-
-            // console.log('Teacher list arr: '+ teacherListArray);
-            // console.log('Teacher list: ' + teacherList);
 
             for (i = 0; i < teacherListArray.length; i++) {
                 while (teacherListArray[i].childNodes.length > 1) {
@@ -327,8 +249,6 @@
                             const optionText = document.createTextNode(row.Name);
                             option.appendChild(optionText);
                             teacherListArray[i].appendChild(option);
-                            // teacherIdArray[i] = row.Id;
-                            // console.log(teacherIdArray[i] + '->' + teacherIdArray[i]);
                         });
                     }
 
@@ -337,9 +257,6 @@
                 let sqlCommandSubject = `SELECT Name, Subject_Id FROM Subjects`;
                 let subjectList = document.getElementsByClassName('select_subject');
                 let subjectListArray = [].slice.call(subjectList);
-                // let subjectIdArray = [];
-
-                // console.log('Sub list : ' + subjectList);
 
                 db.all(sqlCommandSubject, [], (err, rows) => {
                     if (err) {
@@ -358,8 +275,6 @@
                             const optionText = document.createTextNode(row.Name);
                             option.appendChild(optionText);
                             subjectListArray[i].appendChild(option);
-                            // subjectIdArray[i] = row.Subject_Id;
-                            // console.log(subjectIdArray[i] + '->' + subjectListArray[i]);
                         });
                     }
                 });
@@ -367,20 +282,36 @@
         }
 
         function old_drop(routine_name) {
+
+            db.get(`SELECT * FROM Routines WHERE Name="${routine_name}"`, (err, row) => {
+                if (err) {
+                    return console.log(err);
+                }
+                var time = row.Starting_Time;
+                var first_split = time.split(":");
+                var select_firsttime = first_split[0];
+                var second_split = first_split[1].split(" ");
+                var select_secondtime = second_split[0];
+                var select_timeperiod = second_split[1];
+                document.getElementById("select_firsttime").value = select_firsttime;
+                document.getElementById("select_secondtime").value = select_secondtime;
+                document.getElementById("select_timeperiod").value = select_timeperiod;
+                document.getElementById("select_interval").value = 45;
+                myFunction_settime();
+
+                document.getElementById("select_date").value = row.Effective_From;
+            })
+
+
             let sqlCommandTeacher = `SELECT Name FROM Teachers`;
             let teacherList = document.getElementsByClassName('select_teacher');
             let teacherListArray = [].slice.call(teacherList);
-
-            // console.log('Teacher list arr: '+ teacherListArray);
-            // console.log('Teacher list: ' + teacherList);
 
             for (i = 0; i < teacherListArray.length; i++) {
                 while (teacherListArray[i].childNodes.length > 0) {
                     teacherListArray[i].removeChild(teacherListArray[i].lastChild);
                 }
             }
-
-            // console.log('Teacher list arr2: '+ teacherListArray);
 
             let sqlCommandTeacher_routine = `SELECT Teacher FROM Periods WHERE Routine_Name = '${routine_name}' ORDER BY Day`;
 
@@ -398,10 +329,8 @@
                         const optionText = document.createTextNode(row.Teacher);
                         option.appendChild(optionText);
                         teacherListArray[i].appendChild(option);
-                        i = i+1;
+                        i = i + 1;
                     });
-                    console.log(rows);
-
                 });
 
 
@@ -425,8 +354,6 @@
                 let subjectList = document.getElementsByClassName('select_subject');
                 let subjectListArray = [].slice.call(subjectList);
 
-                // console.log('Sub list : ' + subjectList);
-
                 for (i = 0; i < subjectListArray.length; i++) {
                     while (subjectListArray[i].childNodes.length > 0) {
                         subjectListArray[i].removeChild(subjectListArray[i].lastChild);
@@ -449,7 +376,6 @@
                         subjectListArray[i].appendChild(option);
                         i = i + 1;
                     });
-                    console.log(rows);
                 });
 
                 db.all(sqlCommandSubject, [], (err, rows) => {
@@ -481,8 +407,6 @@
 
             document.getElementById("title").innerHTML = Routine_name;
 
-            // console.log(Routine_name);
-
             dropDown();
 
             db.serialize(function () {
@@ -496,8 +420,9 @@
                         old_drop(routine_name);
                     } else {
                         console.log('It does not exist');
+                        var today = new Date();
                         db.serialize(function () {
-                            db.run("INSERT INTO Routines (`Name`, `Program_Name`, `Program_Acronym`, `Batch`, `Year`, `Part`) VALUES ('" + routine_name + "', '" + prog_full + "' ,'" + prog_acr + "', '" + batch_yr + "',  '" + year_rot + "', '" + yr_part + "')", function (err) {
+                            db.run("INSERT INTO Routines (`Name`, `Program_Name`, `Program_Acronym`, `Batch`, `Year`, `Part`, `First_Created`) VALUES ('" + routine_name + "', '" + prog_full + "' ,'" + prog_acr + "', '" + batch_yr + "',  '" + year_rot + "', '" + yr_part + "', '" + today + "')", function (err) {
                                 if (err) {
                                     return console.log(error);
                                 }
@@ -514,11 +439,21 @@
             document.getElementById('Add_Changes').onclick = function (e) {
                 db.serialize(function () {
 
+                    date_val = document.getElementById("select_date").value;
+                    console.log(`Effective Date is from: ${date_val}`);
+
+                    var today = new Date();
+
+                    let start_hour_time = document.getElementById("select_firsttime").value;
+                    let start_minute_time = document.getElementById("select_secondtime").value;
+                    let interval = document.getElementById("select_interval").value;
+                    let time_period = document.getElementById("select_timeperiod").value;
+                    let starting_time = `${start_hour_time}:${start_minute_time} ${time_period}`;
+                    console.log(`Class starts from ${starting_time}`);
+
                     let teacherList_final = document.getElementsByClassName("select_teacher");
                     let teacherListArray_final = [].slice.call(teacherList_final);
                     let routine_db_teacher = [];
-
-                    // console.log(teacherListArray_final);
 
                     for (i = 0; i < teacherListArray_final.length; i++) {
                         routine_db_teacher.push(teacherListArray_final[i].value);
@@ -532,15 +467,10 @@
                         routine_db_subject.push(subjectListArray_final[i].value);
                     }
 
-                    // console.log(routine_db_teacher);
-
-                    date_val = document.getElementById("select_date").value;
-
                     if (saveClickCount < 1) {
                         saveClickCount++;
                         for (let i = 1; i <= 6; i++) {
                             for (let j = 1; j <= 2; j++) {
-                                // db.run("INSERT INTO " + Routine_name + "(`Day`,`Period`,`Teacher`,`Subject`) VALUES ( '"+days[i-1]+"','"+ j.toString() + "','" + routine_db_teacher[(i-1)*2+j-1] + "','"+ routine_db_subject[(i-1)*2+j-1] +"')");   
                                 db.run(`INSERT INTO Periods (Routine_Name, Day, Period_No, Subject, Teacher) VALUES ("${routine_name}", "${i}", "${j}", "${routine_db_subject[(i - 1) * 2 + j - 1]}", "${routine_db_teacher[(i - 1) * 2 + j - 1]}")`, function (err) {
                                     if (err) {
                                         console.log(err);
@@ -563,7 +493,7 @@
                             }
                         }
                     }
-                    // db.run("INSERT INTO " + Routine_name + "(`Batch`,`Program_full`,`Program_acronym`,`Year`,`Part`) VALUES ( '"+ batch_yr+"','"+prog_full+"','"+prog_acr+"','"+year_rot+"','"+yr_part+"') ");
+                    db.run(`UPDATE Routines SET Last_Updated="${today}", Starting_Time="${starting_time}", Effective_From="${date_val}" WHERE Name="${routine_name}"`);
 
                 });
             }

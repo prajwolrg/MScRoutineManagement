@@ -27,10 +27,10 @@
 
     function submitForm(e){
       e.preventDefault();
-      const prgram_name = document.querySelector('#item').value;
-      const program_acronym = document.querySelector('#teacherInitials').value;
+      const teacher_name = document.querySelector('#item').value;
+      const teacher_acronym = document.querySelector('#teacherInitials').value;
       console.log(ipcRenderer);
-      ipcRenderer.send('Program:add', program_name,program_acronym);
+      ipcRenderer.send('Teacher:add', teacher_name,teacher_acronym);
     }
 
     //sending message to exit the window if cancel button is clicked.

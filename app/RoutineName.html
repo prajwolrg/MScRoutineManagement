@@ -67,7 +67,7 @@
         <!-- <input type="text" id="yr_part" autofocus placeholder="2"> -->
 
         <label> Program Acronym</label>
-        <input type="text" id="prog_acr" autofocus placeholder="MSCKSE">
+        <input type="text" id="prog_acr" autofocus placeholder="MScCSKE">
 
       </div>
       <button class="waves-effect waves-light btn" type="reset" id="cancelButton">Cancel</button>
@@ -98,9 +98,9 @@
       let batchList = document.getElementById('batch_yr');
       let tableList2 = document.getElementById('part_dropdown');
 
-      while (programList.childNodes.length > 1) {
-        programList.removeChild(programList.lastChild);
-      }
+      // while (programList.childNodes.length > 1) {
+      //   programList.removeChild(programList.lastChild);
+      // }
 
       db.all(table_names_query, [], (err, rows) => {
         if (err) {
